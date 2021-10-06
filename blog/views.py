@@ -1,15 +1,20 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Post
 from .forms import PostForm
 
 def post_list(request):
-    posts = Post.objects.filter(status = "published")
-    for i in posts:
-        # print(i.text)
-        print(i.published_date.year )
-        print(i.get_absolute_url())
-    return render(request, 'blog/post_list.html', {'posts': posts})
+    object_list = Post.objects.filter(status = "published")
+    paginator = Paginator(object_list, 3)
+    page = request.GET.get('page')
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+    return render(request, 'blog/post_list.html', {'page': page, 'posts': posts})
 
 
 def post_detail(request, year, month, day, post):
