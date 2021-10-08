@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.mail import send_mail
 from django.views.generic import ListView
 
 from .forms import EmailPostForm
@@ -36,15 +37,25 @@ def post_detail(request, year, month, day, post):
 
 def post_share(request, post_id):
     post = get_object_or_404(Post, id = post_id, status = 'published')
+    sent = False
+    cd = []
     if request.method == 'POST':
         form = EmailPostForm(request.POST)
+        print(form)
         if form.is_valid():
-            cd = form.changed_data
+            cd = form.cleaned_data
+            post_url = request.build_absolute_uri(post.get_absolute_url())
+            subject = '{} ({}) recommends you reading "{}"'.format(cd['name'], cd['email'], post.title)
+            message = 'Read "{}" at {}\n\n{}\'s comments: {}'.format(post.title, post_url, cd['name'], cd['comments'])
+            send_mail(subject, message, 'nezhinskaya83@gmail.com',[cd['to']])
+            sent = True
     else:
         form = EmailPostForm()
     return render(request, 'blog/share.html', {
         'post': post,
-        'form': form
+        'form': form,
+        'sent': sent,
+        'cd': cd
     })
         
 
