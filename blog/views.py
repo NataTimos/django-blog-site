@@ -4,9 +4,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.mail import send_mail
 from django.views.generic import ListView
 
-from .forms import EmailPostForm
-from .models import Post
-from .forms import PostForm
+from .models import Post, Comment
+from .forms import PostForm, CommentForm, EmailPostForm
 
 # def post_list(request):
 #     object_list = Post.objects.filter(status = "published")
@@ -33,7 +32,24 @@ def post_detail(request, year, month, day, post):
                                    published_date__year = year,
                                    published_date__month = month,
                                    published_date__day = day)
-    return render(request, 'blog/post_detail.html', {'post': post})
+
+    comments = post.comments.filter(active = True)
+
+    if request.method == 'POST':
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            new_comment = comment_form.save(commit=False)
+            new_comment.post = post
+            new_comment.save()
+            comment_form = CommentForm() #cleaned form data
+    else:
+        comment_form = CommentForm()
+    return render(request, 'blog/post_detail.html', {
+        'post': post,
+        'comments': comments,
+        'comment_form': comment_form
+        })
+
 
 def post_share(request, post_id):
     post = get_object_or_404(Post, id = post_id, status = 'published')
@@ -41,7 +57,6 @@ def post_share(request, post_id):
     cd = []
     if request.method == 'POST':
         form = EmailPostForm(request.POST)
-        print(form)
         if form.is_valid():
             cd = form.cleaned_data
             post_url = request.build_absolute_uri(post.get_absolute_url())
