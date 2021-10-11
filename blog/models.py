@@ -2,6 +2,7 @@ from django.db.models.deletion import CASCADE
 from django.urls import reverse
 from django.db import models
 from django.utils import timezone
+from taggit.managers import TaggableManager
 
 
 # Create your models here.
@@ -19,6 +20,7 @@ class Post(models.Model):
         ('published', 'Published')
     )
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
+    tags = TaggableManager()
 
     class Meta:
         ordering = ('-published_date',)
