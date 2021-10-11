@@ -1,5 +1,6 @@
 {% extends 'blog/layout.html' %}
 {%load static%}
+{% load blog_tags %}
 
 {% block content %}
     {% for post in posts %}
@@ -21,7 +22,7 @@
                 {% endfor %}
             </p>
 
-            <p>{{ post.text|truncatewords:30|linebreaksbr }}</p>
+            <p>{{ post.text|markdown|truncatewords_html:30 }}</p>
         </div>
     {% endfor %}
     {% include "blog/pagination.html" with page=posts %}
