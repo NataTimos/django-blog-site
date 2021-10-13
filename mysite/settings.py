@@ -134,11 +134,16 @@ STATIC_ROOT = os.path.join(BASE_DIR,'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+DEFAULT_FROM_EMAIL = 'nezhinskaya83@gmail.com'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'nezhinskaya83@gmail.com'
 EMAIL_HOST_PASSWORD = 'natasha_nezhinsk'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
 
 
 LOGIN_REDIRECT_URL = reverse_lazy('dashboard')
