@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
+from django.urls import reverse_lazy
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -33,16 +34,18 @@ SITE_ID = 1
 # Application definition
 
 INSTALLED_APPS = [
+    'blog',
+    'taggit',
+    'django.contrib.sites',
+    'django.contrib.sitemaps',
+    'account',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'blog',
-    'taggit',
-    'django.contrib.sites',
-    'django.contrib.sitemaps',
+
 ]
 
 MIDDLEWARE = [
@@ -136,3 +139,8 @@ EMAIL_HOST_USER = 'nezhinskaya83@gmail.com'
 EMAIL_HOST_PASSWORD = 'natasha_nezhinsk'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+
+LOGIN_REDIRECT_URL = reverse_lazy('dashboard')
+LOGIN_URL = reverse_lazy('login')
+LOGOUT_URL = reverse_lazy('logout')
